@@ -1,0 +1,56 @@
+{
+  "data": {
+    "id": 2222187433,
+    "id_str": "2222187433",
+    "name": "John R Perry",
+    "screen_name": "jp26jp",
+    "location": "Salt Lake City",
+    "description": "@j26design",
+    "url": "https://t.co/96kTNEsQXN",
+    "entities": {
+      "url": {
+        "urls": [
+        ]
+      },
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 371,
+    "friends_count": 101,
+    "listed_count": 4,
+    "created_at": "Fri Nov 29 23:50:25 +0000 2013",
+    "favourites_count": 319,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": true,
+    "verified": false,
+    "statuses_count": 470,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "520000",
+    "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/857577690735366145/kLBh8PQA_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/857577690735366145/kLBh8PQA_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/2222187433/1508674042",
+    "profile_link_color": "C62828",
+    "profile_sidebar_border_color": "000000",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": true,
+    "default_profile": false,
+    "default_profile_image": false,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none",
+    "suspended": false,
+    "needs_phone_verification": false
+  }
+}

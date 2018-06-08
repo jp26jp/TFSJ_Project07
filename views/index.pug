@@ -1,0 +1,51 @@
+extends layout
+block content
+    .app--tweet
+        form(action='/index', method='post')
+            .circle--fluid
+                .circle--fluid--cell.circle--fluid--primary.align-bottom.app--tweet--post
+                    .app--avatar #{data}
+                        img(src=photo)
+                    textarea#tweet-textarea.circle--textarea--input(placeholder="What's happening?")
+                    strong#tweet-char.app--tweet--char 140
+                .circle--fluid--cell.align-bottom
+                    button.button-primary(type='submit') Submit
+    .bounds.app--body
+        .app--section--header
+            .grid-33
+                .app--section--heading
+                    h2 Timeline
+            .grid-33
+                .app--section--heading
+                    strong 129
+                    h2 Following
+            .grid-33
+                .app--section--heading
+                    h2 Direct Messages
+        .grid-33
+            .app--section
+                ul.app--tweet--list
+                    each tweet in recentTweets
+                        li
+                            strong.app--tweet--timestamp
+                            a.app--tweet--author
+                                .app--avatar
+                                    img(src=photo)
+                                h4 #{tweet.name}
+                            p #{tweet.text}
+                            ul.app--tweet--actions.circle--list--inline
+                                li
+                                    a.app--reply
+                                        span.tooltip Reply
+                                        .icon.reply-icon
+                                li
+                                    a.app--retweet
+                                        span.tooltip Retweet
+                                        .icon.retweet-icon
+                                li
+                                    a.app--like
+                                        span.tooltip Like
+                                        .icon.like-icon
+
+    .grid-33
+        .grid-33
