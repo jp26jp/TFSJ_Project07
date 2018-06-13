@@ -1,53 +1,111 @@
 const express = require("express"),
-      routes  = express.Router(),
-      Twitter = require("twit"),
-      twitter = new Twitter({
-                                consumer_key       : "LgV5kimtal3yqn24cHHAsw3Fx",
-                                consumer_secret    : "b9m5lAAWn85VJ677LvuK329tRj69h5XrQwvLZfFun3lv5ewzVE",
-                                access_token       : "2222187433-Ge0Eacps8RQgJrXCoaysyO8OZlbMwTg0ZBMTAzz",
-                                access_token_secret: "AkktN84cIoYXo002uHSMBk9JbQjBkdkxmopIdD53sqteT",
-                                timeout_ms         : 60 * 1000,  // optional HTTP request timeout to apply to all requests.
-                                strictSSL          : true     // optional - requires SSL certificates to be valid.
-                            })
+      twitter = require("../config"),
+      routes  = express.Router()
 
-let recentTweets = []
-
-const recentTweetPromise = new Promise((resolve, reject) => {
+const promiseTweets = new Promise(resolve => {
+    let tweetArray = []
     twitter.get("statuses/user_timeline", {screen_name: "jp26jp", count: 5}, (err, tweets, response) => {
-
         tweets.forEach(tweet => {
-            // create recentTweet variable
-            let recentTweet = {}
-
-            // add new values to variable
-            recentTweet.name = tweet.user.name
-            recentTweet.screen_name = tweet.user.screen_name
-            recentTweet.photo = tweet.user.profile_image_url_https
-            recentTweet.url = tweet.user.url
-            recentTweet.text = tweet.text
-            recentTweet.created_at = tweet.created_at
-            recentTweet.retweet_count = tweet.retweet_count
-            recentTweet.favorite_count = tweet.favorite_count
-            recentTweet.favorited = tweet.favorited
-            recentTweet.retweeted = tweet.retweeted
-
-            recentTweets.push(recentTweet)
+            const currentDate = new Date(),
+                  dateOfTweet = new Date(tweet.created_at)
+            let daysSinceTweet          = parseInt((currentDate - dateOfTweet) / 1000 / 60 / 60 / 24),
+                hoursSinceTweet         = parseInt((currentDate - dateOfTweet) / 1000 / 60 / 60),
+                formattedTimeSinceTweet = ""
+            if (daysSinceTweet) {
+                // readjust the hours
+                hoursSinceTweet = hoursSinceTweet - (daysSinceTweet * 24)
+                formattedTimeSinceTweet += `${daysSinceTweet}d `
+            }
+            if (hoursSinceTweet) {formattedTimeSinceTweet += `${hoursSinceTweet}h`}
+            
+            tweetArray.push({
+                                name          : tweet.user.name,
+                                screen_name   : tweet.user.screen_name,
+                                photo         : tweet.user.profile_image_url_https,
+                                url           : `https://twitter.com/${tweet.user.screen_name}`,
+                                text          : tweet.text,
+                                created_at    : formattedTimeSinceTweet,
+                                retweet_count : tweet.retweet_count,
+                                favorite_count: tweet.favorite_count,
+                                favorited     : tweet.favorited,
+                                retweeted     : tweet.retweeted
+                            })
+            console.log("Tweet added!")
         })
-
-
-        resolve(recentTweets)
+        resolve(tweetArray)
     })
 })
 
-Promise.all([recentTweetPromise]).then(results => {
-           routes.get("/", (request, response) => {
-               response.render("index", {
-                   recentTweets
-               })
-           })
-       })
-       .catch(error => {
+const promiseFollowers = new Promise(resolve => {
+    let followerArray = []
+    twitter.get("followers/list", {count: 5}, (error, followers, response) => {
+        followers = followers.users
+        if (followers !== undefined) {
+            followers.forEach(follower => {
+                followerArray.push({
+                                       name       : follower.name,
+                                       screen_name: follower.screen_name,
+                                       url        : `https://twitter.com/${follower.screen_name}`,
+                                       photo      : follower.profile_image_url_https,
+                                       id         : follower.id,
+                                       following  : follower.following
+                                   })
+                console.log("Follower added!")
+            })
+        }
+        resolve(followerArray)
+    })
+})
 
-       })
+const promiseDirectMessages = new Promise(resolve => {
+    
+    const myTwitterId = new Promise(resolve1 => twitter.get("users/show", {screen_name: "jp26jp"}, (error, data) => resolve1(data.id)))
+    
+    myTwitterId.then(id => {
+        let directMessageArray = []
+        twitter.get("direct_messages/events/list", {count: 5}, (error, messages) => {
+            messages = messages.events
+            if (messages !== undefined) {
+                messages.forEach(message => {
+                    const userProfilePhoto = new Promise(resolve1 => twitter.get("users/show", {user_id: message.message_create.sender_id}, (error, data) => resolve1(data.profile_image_url_https)))
+                    userProfilePhoto.then(photo => {
+                        const self = message.message_create.sender_id == id
+                        const timeStamp = new Date(parseInt(message.created_timestamp))
+                        console.log(timeStamp)
+                        directMessageArray.push({
+                                                    timeStamp: formatDate(timeStamp),
+                                                    photo    : photo,
+                                                    text     : message.message_create.message_data.text,
+                                                    self     : self
+                                                })
+                    })
+                })
+            }
+            resolve(directMessageArray)
+        })
+    })
+})
+
+Promise.all([promiseTweets, promiseFollowers, promiseDirectMessages]).then(results => {
+    routes.get("/", (request, response) => response.render("index", {
+        tweetArray        : results[0],
+        followerArray     : results[1],
+        directMessageArray: results[2]
+    }))
+})
+
+function formatDate(date) {
+    let hours   = date.getHours(),
+        minutes = date.getMinutes(),
+        ampm    = hours >= 12 ? "pm" : "am"
+    
+    hours = hours % 12
+    hours = hours ? hours : 12 // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes
+    
+    const strTime = hours + ":" + minutes + " " + ampm
+    
+    return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime
+}
 
 module.exports = routes

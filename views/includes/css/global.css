@@ -35,6 +35,7 @@ audio:not([controls]) {
 /* line 65, ../sass/circle/core/_reset.sass */
 a {
     background-color: transparent;
+    text-decoration: none;
 }
 
 /* line 67, ../sass/circle/core/_reset.sass */
@@ -2661,7 +2662,16 @@ a:hover .app--avatar {
 .app--tweet--actions .icon {
     background-repeat: no-repeat;
     height: 20px;
-    background-position: bottom;
+    background-position: center;
+    display: inline-block;
+}
+
+.app--tweet--actions div, .app--tweet--actions strong {
+    vertical-align: middle;
+}
+
+.app--tweet--actions strong {
+    margin-left: 5px;
 }
 
 .app--tweet--actions a .reply-icon, .app--user--actions a .reply-icon {

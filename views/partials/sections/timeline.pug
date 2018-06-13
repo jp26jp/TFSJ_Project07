@@ -1,0 +1,28 @@
+.grid-33
+    .app--section
+        ul.app--tweet--list
+            each tweet in tweetArray
+                li
+                    strong.app--tweet--timestamp #{tweet.created_at}
+                    a.app--tweet--author(href=tweet.url)
+                        .app--avatar
+                            img(src=tweet.photo)
+                        h4 #{tweet.name}
+                    p #{tweet.text}
+                    ul.app--tweet--actions.circle--list--inline
+                        li
+                            a.app--reply
+                                span.tooltip Reply
+                                .icon.reply-icon
+                        li
+                            a.app--retweet
+                                span.tooltip Retweet
+                                .icon.retweet-icon
+                                if tweet.retweet_count
+                                    strong #{tweet.retweet_count}
+                        li
+                            a.app--like
+                                span.tooltip Like
+                                .icon.like-icon
+                                if tweet.favorite_count
+                                    strong #{tweet.favorite_count}

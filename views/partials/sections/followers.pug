@@ -1,0 +1,17 @@
+.grid-33
+    .app--section
+        ul.app--user--list
+            each tweet in followerArray
+                li
+                    .circle--fluid
+                        .circle--fluid--cell.circle--fluid--primary
+                            a.app--tweet--author(href=tweet.url)
+                                .app--avatar
+                                    img(src=tweet.photo)
+                                h4 #{tweet.name}
+                                p #{tweet.screen_name}
+                        .circle--fluid--cell
+                            if tweet.following
+                                a.button.button-text(data-twitter-id=tweet.id) Unfollow
+                            else
+                                a.button(data-twitter-id=tweet.id) Follow

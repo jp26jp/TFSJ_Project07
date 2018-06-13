@@ -1,0 +1,11 @@
+.grid-33
+    .app--section
+        ul.app--message--list
+            li
+                ul.app--message--conversation
+                    each tweet in directMessageArray
+                        li(class={"app--message--me": tweet.self, "app--message": !tweet.self})
+                            .app--avatar
+                                img(src=tweet.photo)
+                            p.app--message--text #{tweet.text}
+                            p.app--message--timestamp #{tweet.timeStamp}
