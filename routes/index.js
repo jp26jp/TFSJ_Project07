@@ -1,10 +1,12 @@
+const SCREEN_NAME = "jp26jp"
+
 const express = require("express"),
       twitter = require("../config"),
       routes  = express.Router()
 
 const promiseTweets = new Promise(resolve => {
     let tweetArray = []
-    twitter.get("statuses/user_timeline", {screen_name: "jp26jp", count: 5}, (err, tweets, response) => {
+    twitter.get("statuses/user_timeline", {screen_name: SCREEN_NAME, count: 5}, (err, tweets, response) => {
         tweets.forEach(tweet => {
             const currentDate = new Date(),
                   dateOfTweet = new Date(tweet.created_at)
@@ -38,7 +40,7 @@ const promiseTweets = new Promise(resolve => {
 
 const promiseFollowers = new Promise(resolve => {
     let followerArray = []
-    twitter.get("followers/list", {count: 5}, (error, followers, response) => {
+    twitter.get("followers/list", {count: 5}, (error, followers) => {
         followers = followers.users
         if (followers !== undefined) {
             followers.forEach(follower => {
@@ -59,7 +61,7 @@ const promiseFollowers = new Promise(resolve => {
 
 const promiseDirectMessages = new Promise(resolve => {
     
-    const myTwitterId = new Promise(resolve1 => twitter.get("users/show", {screen_name: "jp26jp"}, (error, data) => resolve1(data.id)))
+    const myTwitterId = new Promise(resolve1 => twitter.get("users/show", {screen_name: SCREEN_NAME}, (error, data) => resolve1(data.id)))
     
     myTwitterId.then(id => {
         let directMessageArray = []
